@@ -14,16 +14,11 @@ import os
 #       Naive Bayers
 # 3. Model evaluation
 
+def train_status(config,data,labels):
 
+    # start training
 
-
-# split data into training and testing
-X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.10, random_state=2)
-
-# start training
-
-
-# save best model
+    # save best model
     bestmodel_file = os.path.join(config.save_dir, "best_model.joblib")
     if os.path.exists(bestmodel_file):
         os.remove(bestmodel_file)
@@ -31,3 +26,5 @@ X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.10
         joblib.dump(to_persist, bestmodel_file)  
 
 
+def train_difference(config,data,results):
+    
