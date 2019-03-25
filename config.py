@@ -1,6 +1,5 @@
 # Set our hyper-parameters using command line
 
-
 import argparse
 # ----------------------------------------
 # Global variables within this script
@@ -36,7 +35,7 @@ train_arg = add_argument_group("Training")
 
 
 train_arg.add_argument("--data_dir", type=str,
-                       default="/Users/kwang/Downloads/cifar-10-batches-py",
+                       default="/data",
                        help="Directory with CIFAR10 data")
 
 train_arg.add_argument("--learning_rate", type=float,

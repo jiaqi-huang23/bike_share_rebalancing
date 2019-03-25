@@ -17,14 +17,17 @@ import os
 def train_status(config,data,labels):
 
     # start training
-
+    
+    best_model = None
     # save best model
+    if not os.path.exists(config.save_dir):
+        os.makedirs(config.save_dir)
     bestmodel_file = os.path.join(config.save_dir, "best_model.joblib")
     if os.path.exists(bestmodel_file):
         os.remove(bestmodel_file)
     else:
-        joblib.dump(to_persist, bestmodel_file)  
+        joblib.dump(best_model, bestmodel_file)  
 
 
 def train_difference(config,data,results):
-    
+    return
