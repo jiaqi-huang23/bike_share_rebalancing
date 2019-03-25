@@ -73,15 +73,10 @@ train_arg.add_argument("--resume", type=str2bool,
 # Arguments for model
 model_arg = add_argument_group("Model")
 
-model_arg.add_argument("--feature_type", type=str,
-                       default="hog",
-                       choices=["hog", "h_histogram", "rgb"],
-                       help="Type of feature to be used")
-
-model_arg.add_argument("--loss_type", type=str,
-                       default="cross_entropy",
-                       choices=["cross_entropy", "svm"],
-                       help="Type of data loss to be used")
+model_arg.add_argument("--model", type=str,
+                       default="Lasso",
+                       choices=["LogisticRegression", "SGDClassifier", "Lasso"],
+                       help="Type of linear model to be used")
 
 model_arg.add_argument("--normalize", type=str2bool,
                        default=True,

@@ -26,8 +26,9 @@ def main(config):
         random_state=2)
 
     # train
-    train_status(config,status_train, status_lable_train)
-    train_difference(config, diff_train, diff_res_train)
+    train_status(config,status_train, status_lable_train, status_test, status_label_test)
+
+    # train_difference(config, diff_train, diff_res_train, diff_test, diff_res_test)
 
     # test
 
