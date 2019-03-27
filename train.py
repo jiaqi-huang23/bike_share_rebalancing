@@ -31,8 +31,8 @@ import matplotlib.pyplot as plt
 
 def getScores(estimator, x, y):
     yPred = estimator.predict(x)
-    return (accuracy_score(y, yPred), 
-            precision_score(y, yPred, average='macro'), 
+    return (accuracy_score(y, yPred),
+            precision_score(y, yPred, average='macro'),
             recall_score(y, yPred, average='macro'))
 
 def my_scorer(estimator, x, y):
@@ -49,33 +49,33 @@ def train_status(config,x,y,test_x, test_y):
     print(x.shape)
 
     models = [
-                GaussianNB(), 
+                GaussianNB(),
                 KNeighborsClassifier(),
                 DecisionTreeClassifier(),
                 AdaBoostClassifier(),
                 RandomForestClassifier(n_estimators=20),
                 LinearSVC(),
                 LogisticRegression(
-                                    random_state=0, 
+                                    random_state=0,
                                     solver='lbfgs',
-                                    multi_class='multinomial', 
+                                    multi_class='multinomial',
                                     max_iter=300
                                     ),
                 SGDClassifier(max_iter=1000, tol=1e-3)
     ]
-    names = ["Naive Bayes", 
-            "KNeighborsClassifier", 
-            "Decision Tree", 
-            "AdaBoostClassifier", 
+    names = ["Naive Bayes",
+            "KNeighborsClassifier",
+            "Decision Tree",
+            "AdaBoostClassifier",
             "RandomForestClassifier",
             "LinearSVC",
-            "LogisticRegression", 
+            "LogisticRegression",
             "SGDClassifier"]
 
     for model, name in zip(models, names):
         print (name)
         start = time.time()
-     
+
         m = np.mean(cross_val_score(model, x, y,scoring=my_scorer, cv=15))
         model = model.fit(x,y)
         print ('\nSum:',m, '\n\n')
@@ -96,7 +96,7 @@ def train_status(config,x,y,test_x, test_y):
     if os.path.exists(bestmodel_file):
         os.remove(bestmodel_file)
     else:
-        joblib.dump(best_model, bestmodel_file)  
+        joblib.dump(best_model, bestmodel_file)
 
 
 def train_difference(config,x,y,test_x, test_y):
