@@ -7,8 +7,8 @@ from config import get_config, print_usage
 
 def main(config):
     # load data here, then train and test
-    status_data, status_label = loadStatusData()
-    diff_data, diff_res = loadDifferenceData()
+    status_data, status_label = loadStatusData(config)
+    diff_data, diff_res = loadDifferenceData(config)
 
     print(status_data.shape)
     print(status_label.shape)
