@@ -7,20 +7,20 @@ import joblib
 from collections import Counter
 import numpy as np
 from sklearn.svm import LinearSVC
-from sklearn.model_selection import train_test_split, cross_val_score,cross_val_predict
+from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict, cross_validate
 import os
 from imblearn.under_sampling import NearMiss
 from imblearn.metrics import classification_report_imbalanced
-from sklearn.linear_model import Lasso, LogisticRegression, SGDClassifier
+from sklearn.linear_model import Lasso, LogisticRegression, SGDClassifier, SGDRegressor
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor
-from sklearn.tree import DecisionTreeRegressor,DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, mean_squared_error, mean_absolute_error, explained_variance_score,r2_score
 from sklearn.naive_bayes import GaussianNB
 import matplotlib.pyplot as plt
 
 
-## TODO
+# TODO
 # 1. Tuning hyper-parameters
 # 2. Find out models that can fit:
 #       SGD
@@ -35,53 +35,55 @@ def getScores(estimator, x, y):
             precision_score(y, yPred, average='macro'),
             recall_score(y, yPred, average='macro'))
 
+
 def my_scorer(estimator, x, y):
     a, p, r = getScores(estimator, x, y)
-    print (a, p, r)
+    print(a, p, r)
     return a+p+r
 
-def train_status(config,x,y,test_x, test_y):
+
+def train_status(config, x, y, test_x, test_y):
     print("...start training status model....")
     print('Original dataset shape %s' % Counter(y))
     print(x.shape)
-    x,y = NearMiss().fit_resample(x,y)
+    x, y = NearMiss().fit_resample(x, y)
     print('Resampled dataset shape %s' % Counter(y))
     print(x.shape)
 
     models = [
-                GaussianNB(),
-                KNeighborsClassifier(),
-                DecisionTreeClassifier(),
-                AdaBoostClassifier(),
-                RandomForestClassifier(n_estimators=20),
-                LinearSVC(),
-                LogisticRegression(
-                                    random_state=0,
-                                    solver='lbfgs',
-                                    multi_class='multinomial',
-                                    max_iter=300
-                                    ),
-                SGDClassifier(max_iter=1000, tol=1e-3)
+        GaussianNB(),
+        KNeighborsClassifier(),
+        DecisionTreeClassifier(),
+        AdaBoostClassifier(),
+        RandomForestClassifier(n_estimators=20),
+        LinearSVC(),
+        LogisticRegression(
+            random_state=0,
+            solver='lbfgs',
+            multi_class='multinomial',
+            max_iter=300
+        ),
+        SGDClassifier(max_iter=1000, tol=1e-3)
     ]
     names = ["Naive Bayes",
-            "KNeighborsClassifier",
-            "Decision Tree",
-            "AdaBoostClassifier",
-            "RandomForestClassifier",
-            "LinearSVC",
-            "LogisticRegression",
-            "SGDClassifier"]
+             "KNeighborsClassifier",
+             "Decision Tree",
+             "AdaBoostClassifier",
+             "RandomForestClassifier",
+             "LinearSVC",
+             "LogisticRegression",
+             "SGDClassifier"]
 
     for model, name in zip(models, names):
-        print (name)
+        print(name)
         start = time.time()
 
-        m = np.mean(cross_val_score(model, x, y,scoring=my_scorer, cv=15))
-        model = model.fit(x,y)
-        print ('\nSum:',m, '\n\n')
+        m = np.mean(cross_val_score(model, x, y, scoring=my_scorer, cv=15))
+        model = model.fit(x, y)
+        print('\nSum:', m, '\n\n')
         print("test")
         scores = my_scorer(model, test_x, test_y)
-        print ('time', time.time() - start, '\n\n')
+        print('time', time.time() - start, '\n\n')
 
     # clf.fit(x,y)
     # score = recall_score(test_y,clf.predict(test_x),average="weighted")
@@ -99,5 +101,47 @@ def train_status(config,x,y,test_x, test_y):
         joblib.dump(best_model, bestmodel_file)
 
 
-def train_difference(config,x,y,test_x, test_y):
+
+def getRegressionErrorScore(estimator, x, y):
+    yPred = estimator.predict(x)
+    return (mean_squared_error(y,yPred),
+            mean_absolute_error(y,yPred),
+            explained_variance_score(y,yPred),
+            r2_score(y,yPred))
+
+def my_regression_scorer(estimator, x, y):
+    ms, ma, evs, r2 = getRegressionErrorScore(estimator, x, y)
+    print(ms, ma, evs, r2)
+    return ms+ma+evs+r2
+
+def train_difference(config, x, y, test_x, test_y):
+    models = [
+        Lasso(),
+        RandomForestRegressor(n_estimators=20),
+        GradientBoostingRegressor(),
+        AdaBoostRegressor(),
+        DecisionTreeRegressor(),
+        SGDRegressor(max_iter=1000)
+    ]
+    names = [
+        "Lasso",
+        "RandomForestRegressor",
+        "GradientBoostingRegressor",
+        "AdaBoostRegressor",
+        "DecisionTreeRegressor",
+        "SGDRegressor"
+    ]
+
+    for model, name in zip(models, names):
+        print(name)
+        start = time.time()
+
+        m = np.mean(cross_val_score(model, x, y, scoring=my_regression_scorer, cv=5))
+
+        model = model.fit(x, y)
+        print('\nSum:', m, '\n\n')
+        print("test")
+        scores = my_regression_scorer(model, test_x, test_y)
+        print('time', time.time() - start, '\n\n')
+
     return

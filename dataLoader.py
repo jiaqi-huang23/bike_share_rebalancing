@@ -24,13 +24,15 @@ def loadStatusData(config):
 
     return data, labels
 
-def loadDifferenceData():
-    diff = pd.read_csv("./data/diff_weather.csv")
+def loadDifferenceData(config):
+    diff = pd.read_csv("./data/diff_weater_day_merged.csv")
+    diff = diff.sample(frac=config.frac, replace=True)
 
-    print(diff.head())
     # linear regression for diff
     result = diff.difference
-    data = diff.drop(['date','year','month','day'],1)
+    data = diff.drop(['date','year','month','day','difference','weeknoRef','holiday'],1)
+    
+    print(data.head())
 
     # convert data type to float (from string)
     data = data.astype(dtype=float)
