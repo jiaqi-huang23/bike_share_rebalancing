@@ -22,9 +22,9 @@ def loadStatusData():
     return data, labels
 
 def loadDifferenceData():
-    diff = pd.read_csv("./data/diff.csv")
-    # weather = pd.read_csv("./data/weather.csv")
+    diff = pd.read_csv("./data/diff_weather.csv")
 
+    print(diff.head())
     # linear regression for diff
     result = diff.difference
     data = diff.drop(['date','year','month','day'],1)

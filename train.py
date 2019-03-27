@@ -2,53 +2,90 @@
 # 1. Model selection and evaluation - https://scikit-learn.org/stable/model_selection.html#model-selection
 # 2. ML leanring map - https://scikit-learn.org/stable/tutorial/machine_learning_map/index.html
 
+import time
 import joblib
+from collections import Counter
 import numpy as np
-from sklearn import svm
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.svm import LinearSVC
+from sklearn.model_selection import train_test_split, cross_val_score,cross_val_predict
 import os
+from imblearn.under_sampling import NearMiss
+from imblearn.metrics import classification_report_imbalanced
 from sklearn.linear_model import Lasso, LogisticRegression, SGDClassifier
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor
-from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor
+from sklearn.tree import DecisionTreeRegressor,DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.naive_bayes import GaussianNB
+import matplotlib.pyplot as plt
+
 
 ## TODO
 # 1. Tuning hyper-parameters
-# 2. implement models below:
+# 2. Find out models that can fit:
 #       SGD
 #       Linear SVM
 #       Naive Bayers
+#       K nearest neighbours
 # 3. Model evaluation
 
-def getValScore(clf,x,y):
-    print("train-val")
-    scores = cross_val_score(clf, x, y, cv=15, n_jobs=1, scoring = 'neg_median_absolute_error') 
-    return (np.median(scores) * -1)
+def getScores(estimator, x, y):
+    yPred = estimator.predict(x)
+    return (accuracy_score(y, yPred), 
+            precision_score(y, yPred, average='macro'), 
+            recall_score(y, yPred, average='macro'))
+
+def my_scorer(estimator, x, y):
+    a, p, r = getScores(estimator, x, y)
+    print (a, p, r)
+    return a+p+r
 
 def train_status(config,x,y,test_x, test_y):
-    # if config.model == "LogisticRegression":
-    #     clf = LogisticRegression(
-    #         random_state=0, 
-    #         solver='lbfgs',
-    #         multi_class='multinomial', 
-    #         class_weight='balanced', 
-    #         max_iter=200)
-    # elif config.model == "SGDClassifier":
-    #     clf = SGDClassifier(max_iter=1000, tol=1e-3)
-    # elif config.model == "Lasso":
-    #     clf = Lasso(alpha=0.1) 
     print("...start training status model....")
+    print('Original dataset shape %s' % Counter(y))
+    print(x.shape)
+    x,y = NearMiss().fit_resample(x,y)
+    print('Resampled dataset shape %s' % Counter(y))
+    print(x.shape)
 
-    # clf = svm.LinearSVC(class_weight='balanced')
-    # clf = clf.fit(x, y)
-    knn = KNeighborsClassifier(n_neighbors=5)
-    # knn.fit(x,y)
-    # start training
-    val_score = getValScore(knn,x, y)
+    models = [
+                GaussianNB(), 
+                KNeighborsClassifier(),
+                DecisionTreeClassifier(),
+                AdaBoostClassifier(),
+                RandomForestClassifier(n_estimators=20),
+                LinearSVC(),
+                LogisticRegression(
+                                    random_state=0, 
+                                    solver='lbfgs',
+                                    multi_class='multinomial', 
+                                    max_iter=300
+                                    ),
+                SGDClassifier(max_iter=1000, tol=1e-3)
+    ]
+    names = ["Naive Bayes", 
+            "KNeighborsClassifier", 
+            "Decision Tree", 
+            "AdaBoostClassifier", 
+            "RandomForestClassifier",
+            "LinearSVC",
+            "LogisticRegression", 
+            "SGDClassifier"]
 
-    # score = accuracy_score(test_y,knn.predict(test_x))
-    print(val_score)
+    for model, name in zip(models, names):
+        print (name)
+        start = time.time()
+     
+        m = np.mean(cross_val_score(model, x, y,scoring=my_scorer, cv=15))
+        model = model.fit(x,y)
+        print ('\nSum:',m, '\n\n')
+        print("test")
+        scores = my_scorer(model, test_x, test_y)
+        print ('time', time.time() - start, '\n\n')
+
+    # clf.fit(x,y)
+    # score = recall_score(test_y,clf.predict(test_x),average="weighted")
+    # print(score)
     # return clf
 
     best_model = None
@@ -63,11 +100,4 @@ def train_status(config,x,y,test_x, test_y):
 
 
 def train_difference(config,x,y,test_x, test_y):
-    knn = KNeighborsClassifier(n_neighbors=5)
-    # knn.fit(x,y)
-    # start training
-    val_score = getValScore(knn,x, y)
-    
-    score = accuracy_score(test_y,knn.predict(test_x))
-    print(score)
-    # return clf
+    return
