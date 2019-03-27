@@ -28,7 +28,9 @@ main_arg.add_argument("--mode", type=str,
                       default="train",
                       choices=["train", "test"],
                       help="Run mode")
-
+main_arg.add_argument("--frac", type=float,
+                    default=1, help="Fraction of axis data to use"
+                    )
 # ----------------------------------------
 # Arguments for training
 train_arg = add_argument_group("Training")
