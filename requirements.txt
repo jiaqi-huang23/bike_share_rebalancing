@@ -9,4 +9,3 @@ Scikit-learn>=0.20
 Cython >=0.23
 pytest >=3.3.0
 pandas>=0.23.0
-joblib>=0.13

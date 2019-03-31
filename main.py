@@ -1,4 +1,3 @@
-import joblib
 from sklearn.model_selection import train_test_split
 import os
 from dataLoader import loadStatusData, loadDifferenceData
@@ -7,8 +6,8 @@ from config import get_config, print_usage
 
 def main(config):
     # load data here, then train and test
-    status_data, status_label = loadStatusData(config)
-    diff_data, diff_res = loadDifferenceData(config)
+    status_data, status_label, status_lable_train, status_label_test = loadStatusData(config)
+    diff_data, diff_res, diff_res_train, diff_res_test= loadDifferenceData(config)
 
     print(status_data.shape)
     print(status_label.shape)
@@ -16,19 +15,19 @@ def main(config):
     status_train, status_test, status_lable_train, status_label_test = train_test_split(
         status_data,
         status_label,
-        test_size=0.10,
-        random_state=2)
+        test_size=0.2)
 
     diff_train, diff_test, diff_res_train, diff_res_test = train_test_split(
         diff_data,
         diff_res,
-        test_size=0.10,
+        test_size=0.2,
         random_state=2)
 
     # train
-    # train_status(config,status_train, status_lable_train, status_test, status_label_test)
+    train_status(config,status_train, status_lable_train, status_test, status_label_test)
 
-    train_difference(config, diff_train, diff_res_train, diff_test, diff_res_test)
+    # train_status(config,status_train, status_lable_train, sample_x, sample_y)
+    # train_difference(config, diff_train, diff_res_train, diff_test, diff_res_test)
 
     # test
 
