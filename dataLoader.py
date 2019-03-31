@@ -71,7 +71,7 @@ def labelInOut(row):
         return 0
 
 def loadDifferenceData(config):
-    diff = pd.read_csv("./data/diff_weather2.csv")
+    diff = pd.read_csv("./data/diff_weather.csv")
     # diff = diff.sample(frac=config.frac, replace=True)
     # diff['difference'] = diff.apply(lambda row: labelInOut(row), axis=1)
     # diff.to_csv(index=False,path_or_buf='./data/diff_weather2.csv')
