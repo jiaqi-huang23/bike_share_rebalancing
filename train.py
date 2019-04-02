@@ -27,7 +27,7 @@ def get_models_names(multiclass_opt='multinomial'):
     models = [
        # GaussianNB(),
        # KNeighborsClassifier(),
-       # DecisionTreeClassifier(),
+       DecisionTreeClassifier(),
         #AdaBoostClassifier(),
         RandomForestClassifier(n_estimators=200),
         #LinearSVC(max_iter=1000),
@@ -43,7 +43,7 @@ def get_models_names(multiclass_opt='multinomial'):
     names = [
            # "Naive Bayes",
            # "KNeighborsClassifier",
-           # "Decision Tree",
+           "Decision Tree",
             # "AdaBoostClassifier",
             "RandomForestClassifier",
              # "LinearSVC",
@@ -89,7 +89,7 @@ def train_status(config, x, y, test_x, test_y):
         print(name)
         start = time.time()
         feature_names = ["station_id", "hour", "avg(temp)", "avg(wind)", "weekno"]
-        # m = np.mean(cross_val_score(model, x, y, scoring=my_scorer, cv=3))
+        m = np.mean(cross_val_score(model, x, y, scoring=my_scorer, cv=3))
         model = model.fit(x, y)
 
         if name == 'RandomForestClassifier' or name == 'LogisticRegression':
@@ -98,8 +98,8 @@ def train_status(config, x, y, test_x, test_y):
             y2 = yPred[yPred==2]
             y1 = yPred[yPred==1]
             y3 = yPred[yPred==0]
-            for y_, predY_ in zip(test_y,yPred):
-                print("truth lable: %d pred: %d" % (y_, predY_))
+            # for y_, predY_ in zip(test_y,yPred):
+            #     print("truth lable: %d pred: %d" % (y_, predY_))
             #         print('=====')
             # print(y1)
             # print(y2)
@@ -134,11 +134,11 @@ def train_status(config, x, y, test_x, test_y):
             # plt.xlim([-1, x.shape[1]])
             # plt.show()
 
-        # print('\nSum:', m, '\n\n')
-        # print("test")
+        print('\nSum:', m, '\n\n')
+        print("test")
 
-        # scores = my_scorer(model, test_x, test_y)
-        # print('time', time.time() - start, '\n\n')
+        scores = my_scorer(model, test_x, test_y)
+        print('time', time.time() - start, '\n\n')
 
     # clf.fit(x,y)
     # score = recall_score(test_y,clf.predict(test_x),average="weighted")

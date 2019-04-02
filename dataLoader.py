@@ -80,11 +80,11 @@ def loadDifferenceData(config):
     
     sampled_points = getTargetSample(diff,'station')
     #print(sampled_points)
-    label = diff.label
-    data = diff.drop(['date','year','month','day','label','weeknoRef','holiday'],1)
+    label = diff.difference
+    data = diff.drop(['date','year','month','day','difference','weeknoRef','holiday'],1)
     
-    sample_lables = sampled_points.label
-    sample_data = sampled_points.drop(['date','year','month','day','label','weeknoRef','holiday'],1)
+    sample_lables = sampled_points.difference
+    sample_data = sampled_points.drop(['date','year','month','day','difference','weeknoRef','holiday'],1)
     #print(data.head())
 
     # convert data type to float (from string)
@@ -92,4 +92,5 @@ def loadDifferenceData(config):
     label = label.astype(dtype=int)
     # scale data
     data = preprocessing.scale(data)
+    
     return data, label, sample_data, sample_lables
