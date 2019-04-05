@@ -11,8 +11,8 @@ from sklearn.model_selection import train_test_split, cross_val_score, cross_val
 import os
 from imblearn.under_sampling import NearMiss
 from imblearn.metrics import classification_report_imbalanced
-from sklearn.linear_model import Lasso, LogisticRegression, SGDClassifier, SGDRegressor, Perceptron
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor
+from sklearn.linear_model import Lasso, LogisticRegression, SGDClassifier 
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, mean_squared_error, mean_absolute_error, explained_variance_score, r2_score

@@ -19,9 +19,10 @@ def scale(row, mean, std):
 
 
 def loadStatusData(config):
-    md = pd.read_csv("./data/final_data.csv")
-    # randomly sample x% of data to downsize dataset
-    # md = md.sample(frac=config.frac, replace=True)
+    path = config.data_path + '/station_status.csv'
+    md = pd.read_csv(path)
+    # randomly sample x% of data to downsize dataset. Default frac=1, the dataset will be shuffled.
+    md = md.sample(frac=config.frac, replace=True)
 
     # split data into data and label
     labels = md.label
@@ -48,19 +49,17 @@ def labelInOut(row):
 
 
 def loadDifferenceData(config):
-    diff = pd.read_csv("./data/diff_weather.csv")
-    # diff = diff.sample(frac=config.frac, replace=True)
+    path = config.data_path + '/trip_diff.csv'
+    diff = pd.read_csv(path)
+    # randomly sample x% of data to downsize dataset.Default frac=1, the dataset will be shuffled.
+    diff = diff.sample(frac=config.frac, replace=True)
     # diff['difference'] = diff.apply(lambda row: labelInOut(row), axis=1)
-    # randomly sample x% of data to downsize dataset
-    # linear regression for diff
 
-    #print(sampled_points)
     label = diff.difference
     data = diff.drop(['date', 'year', 'day',
                       'difference', 'weeknoRef', 'holiday'], 1)
 
     print(data.head())
-
     # convert data type to float (from string)
     data = data.astype(dtype=float)
     label = label.astype(dtype=int)
