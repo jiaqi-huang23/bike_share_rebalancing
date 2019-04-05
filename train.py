@@ -17,34 +17,28 @@ from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, mean_squared_error, mean_absolute_error, explained_variance_score,r2_score
 from sklearn.naive_bayes import GaussianNB
+import matplotlib.pyplot as plt
 
 def get_models_names(multiclass_opt='multinomial'):
     models = [
-       #  GaussianNB(),
-       #  KNeighborsClassifier(),
-       #  DecisionTreeClassifier(),
-       # RandomForestClassifier(n_estimators=200),
+        DecisionTreeClassifier(),
+       RandomForestClassifier(n_estimators=200),
         LogisticRegression(
             solver='lbfgs',
             multi_class=multiclass_opt,
             max_iter=3000
-        ) #,
-       # SGDClassifier(max_iter=10000, alpha=0.00001,tol=1e-3)
+        ),
+       SGDClassifier(max_iter=10000, alpha=0.00001,tol=1e-3)
     ]
 
     names = [
-           # "Naive Bayes",
-          # "KNeighborsClassifier",
-          # "Decision Tree",
-          #  "RandomForestClassifier",
-             "LogisticRegression" #,
-           #  "SGDClassifier"
+          "Decision Tree",
+           "RandomForestClassifier",
+             "LogisticRegression",
+             "SGDClassifier"
             ]
     
     return models, names
-
-
-            
 
 def getScores(estimator, x, y):
     yPred = estimator.predict(x)
@@ -72,19 +66,23 @@ def train_status(config, x, y, test_x, test_y):
         print(name)
         start = time.time()
         feature_names = ["station_id", "hour", "avg(temp)", "avg(wind)", "weekno"]
+
         if name == 'LogisticRegression':
-            # predicted = cross_val_predict(model, x, y, cv=10)
-            # print(predicted)
-            # m = accuracy_score(y, predicted)
-            # print("cross-val score: %d" % (m))
-            model.fit(x,y)
+            model = model.fit(x,y)
+            train_score = model.score(x,y)
+            print(train_score)
             print("test")
             score = model.score(test_x,test_y)
+            accuracy = accuracy_score(test_y, model.predict(test_x))
             print(score)
+            print(accuracy)
             print('time', time.time() - start, '\n\n')
         else:
-            m = np.mean(cross_val_score(model, x, y, scoring=my_scorer, cv=5))
+            m = cross_validate(model, x, y, scoring=my_scorer, cv=15, return_estimator=True)
+            model = m['estimator'][-1]
             model = model.fit(x, y)
+
+           #  model = model.fit(x, y)
    
             # for y_, predY_ in zip(test_y,yPred):
             #     print("truth lable: %d pred: %d" % (y_, predY_))
@@ -97,35 +95,36 @@ def train_status(config, x, y, test_x, test_y):
             # print(test_y)
             # print(yPred)
             # outputData('./rf_point_test.csv',test_x,test_y,yPred,feature_names)
-            # importances = model.feature_importances_
+            importances = model.feature_importances_
             # print(importances)
             # # std = np.std([tree.feature_importances_ for tree in model.estimators_],
             # #             axis=0)
-            # indices = np.argsort(importances)[::-1]
+            indices = np.argsort(importances)[::-1]
 
-            # # Print the feature ranking
-            # print("Feature ranking:")
+            # Print the feature ranking
+            print("Feature ranking:")
 
-            # for f in range(x.shape[1]):
-            #     print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
-            # feature_names = ["station_id", "hour", "avg(temp)", "avg(wind)", "weekno"]
-            # fn = rearrange_feature(feature_names, indices)
+            for f in range(x.shape[1]):
+                print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
+            feature_names = ["station_id", "hour", "month","avg(temp)", "avg(wind)", "weekno"]
+            fn = rearrange_feature(feature_names, indices)
 
-            # # Plot the feature importances of the forest
-            # plt.figure()
-            # plt.title("Feature importances")
-            # c = np.random.rand() 
-            # plt.bar(range(x.shape[1]), importances[indices],
-            #     color='#afeeee', align="center")
-            # plt.xticks(range(x.shape[1]),  fn)
-            # plt.xlim([-1, x.shape[1]])
-            # plt.show()
+            # Plot the feature importances of the forest
+            plt.figure()
+            plt.title("Feature importances")
+            c = np.random.rand() 
+            plt.bar(range(x.shape[1]), importances[indices],
+                color='#4682B4', align="center")
+            plt.xticks(range(x.shape[1]),  fn)
+            plt.xlim([-1, x.shape[1]])
+            plt.show()
 
-        print('\nSum:', m, '\n\n')
-        print("test")
-        scores = my_scorer(model, test_x, test_y)
-        print(scores)
-        print('time', time.time() - start, '\n\n')
+            # print('\nSum:', m, '\n\n')
+            print("test")
+            print(model)
+            scores = my_scorer(model, test_x, test_y)
+            print(scores)
+            print('time', time.time() - start, '\n\n')
 
     # clf.fit(x,y)
     # score = recall_score(test_y,clf.predict(test_x),average="weighted")
@@ -163,15 +162,16 @@ def train_difference(config, x, y, test_x, test_y):
         start = time.time()
 
         if name == 'LogisticRegression':
-            m = np.mean(cross_val_score(model, x, y, scoring=model.score, cv=5))
+            # m = np.mean(cross_val_score(model, x, y, scoring=model.score, cv=5))
+            model = model.fit(x,y)
             print("test")
             score = model.score(test_x,test_y)
             print(score)
             print('time', time.time() - start, '\n\n')
         else:
-            m = np.mean(cross_val_score(model, x, y, scoring=my_scorer, cv=5))
+            m = cross_validate(model, x, y, scoring=my_scorer, cv=15, return_estimator=True)
+            model = m['estimator'][-1]
             model = model.fit(x, y)
-            print('\nSum:', m, '\n\n')
             print("test")
             scores = my_scorer(model, test_x, test_y)
             print(scores)

@@ -32,7 +32,7 @@ def loadStatusData(config):
     # md['weekno'] = md.apply(lambda row: merge_day(row), axis=1)
     # md.to_csv(index=False,path_or_buf='./data/final_data_2.csv')
     # randomly sample x% of data to downsize dataset
-    # md = md.sample(frac=config.frac, replace=True)
+    md = md.sample(frac=config.frac, replace=True)
 
     sampled_points = getTargetSample(md,'station_id')
     # print(sampled_points)
@@ -40,7 +40,7 @@ def loadStatusData(config):
     # classification for station
     # split data into data and label
     labels = md.label
-    data = md.drop(['label','avg(bikes_available)','year', 'avg(docks_available)','month','day','date','fullness','holiday'],1)
+    data = md.drop(['label','avg(bikes_available)','year','avg(docks_available)', 'max(rain)','day','date','fullness','holiday'],1)
     print(data.head(5))
     # convert data type to float (from string)
     data = data.astype(dtype=float)
@@ -62,7 +62,7 @@ def loadStatusData(config):
     # # sample_data = preprocessing.normalize(sample_data)
     # # print(sample_data)
 
-    return data, labels, sample_data, sample_lables
+    return data, labels
 
 def labelInOut(row):
     if row['difference'] >= 0:
@@ -93,4 +93,4 @@ def loadDifferenceData(config):
     # scale data
     data = preprocessing.scale(data)
     
-    return data, label, sample_data, sample_lables
+    return data, label
