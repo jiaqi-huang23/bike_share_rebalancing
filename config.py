@@ -18,7 +18,6 @@ def add_argument_group(name):
     arg_lists.append(arg)
     return arg
 
-
 # ----------------------------------------
 # Arguments for the main program
 main_arg = add_argument_group("Main")
