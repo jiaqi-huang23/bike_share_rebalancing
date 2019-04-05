@@ -15,21 +15,18 @@ def main(config):
     status_train, status_test, status_lable_train, status_label_test = train_test_split(
         status_data,
         status_label,
-        test_size=0.1)
+        test_size=config.test_size)
 
     diff_train, diff_test, diff_res_train, diff_res_test = train_test_split(
         diff_data,
         diff_res,
-        test_size=0.1,
+        test_size=config.test_size,
         random_state=2)
 
     # train
-    # train_status(config,status_train, status_lable_train, status_test, status_label_test)
+    train_status(config,status_train, status_lable_train, status_test, status_label_test)
 
-    train_status(config,status_train, status_lable_train, sample_x, sample_y)
     train_difference(config, diff_train, diff_res_train, diff_test, diff_res_test)
-
-    # test
 
 if __name__ == "__main__":
     # Parse configuration

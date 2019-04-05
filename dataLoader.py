@@ -35,13 +35,13 @@ def loadStatusData(config):
     # md = md.sample(frac=config.frac, replace=True)
 
     sampled_points = getTargetSample(md,'station_id')
-    print(sampled_points)
+    # print(sampled_points)
     # take the fi
     # classification for station
     # split data into data and label
     labels = md.label
-    data = md.drop(['label','year','avg(bikes_available)','avg(docks_available)', 'max(rain)','month','day','date','fullness','holiday'],1)
-    # print(data.head(5))
+    data = md.drop(['label','avg(bikes_available)','year', 'avg(docks_available)','month','day','date','fullness','holiday'],1)
+    print(data.head(5))
     # convert data type to float (from string)
     data = data.astype(dtype=float)
     labels = labels.astype(dtype=int)
@@ -52,9 +52,9 @@ def loadStatusData(config):
     # scale data
     data = preprocessing.scale(data)
     sample_lables = (sampled_points.label).astype(dtype=int)
-    print(sample_lables)
-    sample_data = sampled_points.drop(['label','year','avg(bikes_available)',
-                'avg(docks_available)', 'max(rain)','month','day','date','fullness','holiday'],1).astype(dtype=float)
+    # print(sample_lables)
+    sample_data = sampled_points.drop(['label','avg(bikes_available)',
+                'avg(docks_available)', 'max(rain)','year', 'month','day','date','fullness','holiday'],1).astype(dtype=float)
     sample_data = sample_data.apply(lambda row: scale(row,mean,std), axis=1)
     # print(arr)
     # arr = (arr-mean)/std
@@ -85,7 +85,7 @@ def loadDifferenceData(config):
     
     sample_lables = sampled_points.difference
     sample_data = sampled_points.drop(['date','year','month','day','difference','weeknoRef','holiday'],1)
-    #print(data.head())
+    print(data.head())
 
     # convert data type to float (from string)
     data = data.astype(dtype=float)

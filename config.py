@@ -31,6 +31,9 @@ main_arg.add_argument("--mode", type=str,
 main_arg.add_argument("--frac", type=float,
                     default=1, help="Fraction of axis data to use"
                     )
+main_arg.add_argument("--test_size", type=float,
+                    default=0.1, help="The proportion of test set size in the whole data set."
+                    )
 # ----------------------------------------
 # Arguments for training
 train_arg = add_argument_group("Training")
