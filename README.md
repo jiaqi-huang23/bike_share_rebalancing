@@ -37,9 +37,11 @@ options:
 __station_status.csv__
 
 Data about the weather and fullness for given station and time.
+
 Download URL: https://drive.google.com/file/d/1wGfbixPh6riggJTVD-T0GWEOKFQ0lC3J/view?usp=sharing
 
 __trip_difference.csv__
 
 Data about the weather and the difference of the number of  incoming and outgoing bikes for given station and time.
+
 Download URL: https://drive.google.com/file/d/1_kqr0r22UG-tcCh98YqzgcKK2WcQBbyX/view?usp=sharing
