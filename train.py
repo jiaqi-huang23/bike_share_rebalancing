@@ -11,8 +11,8 @@ from sklearn.model_selection import train_test_split, cross_val_score, cross_val
 import os
 from imblearn.under_sampling import NearMiss
 from imblearn.metrics import classification_report_imbalanced
-from sklearn.linear_model import Lasso, LogisticRegression, SGDClassifier, SGDRegressor, Perceptron
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor
+from sklearn.linear_model import Lasso, LogisticRegression, SGDClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, mean_squared_error, mean_absolute_error, explained_variance_score, r2_score
@@ -57,6 +57,7 @@ def my_scorer(estimator, x, y):
 
 def train_status(config, x, y, test_x, test_y):
     print("...start training status model....")
+    # balance data
     print('Original dataset shape %s' % Counter(y))
     print(x.shape)
     x, y = NearMiss().fit_resample(x, y)
@@ -82,70 +83,38 @@ def train_status(config, x, y, test_x, test_y):
             print('time', time.time() - start, '\n\n')
         else:
             m = cross_validate(model, x, y, scoring=my_scorer,
-                               cv=15, return_estimator=True)
+                               cv=10, return_estimator=True)
             model = m['estimator'][-1]
             model = model.fit(x, y)
 
-           #  model = model.fit(x, y)
+            if name != 'SGDClassifier':
+                # plot weight importance
+                importances = model.feature_importances_
+                indices = np.argsort(importances)[::-1]
 
-            # for y_, predY_ in zip(test_y,yPred):
-            #     print("truth lable: %d pred: %d" % (y_, predY_))
-            # print(y1)
-            # print(y2)
-            # print(y3)
-            # print('=====')
-            # print(test_x)
-            # print(test_y.shape)
-            # print(test_y)
-            # print(yPred)
-            # outputData('./rf_point_test.csv',test_x,test_y,yPred,feature_names)
-            importances = model.feature_importances_
-            # print(importances)
-            # # std = np.std([tree.feature_importances_ for tree in model.estimators_],
-            # #             axis=0)
-            indices = np.argsort(importances)[::-1]
+                # Print the feature ranking
+                print("Feature ranking:")
 
-            # Print the feature ranking
-            print("Feature ranking:")
+                for f in range(x.shape[1]):
+                    print("%d. feature %d (%f)" %
+                          (f + 1, indices[f], importances[indices[f]]))
+                feature_names = ["station_id", "hour",
+                                 "month", "avg(temp)", "avg(wind)", "weekno"]
+                fn = rearrange_feature(feature_names, indices)
 
-            for f in range(x.shape[1]):
-                print("%d. feature %d (%f)" %
-                      (f + 1, indices[f], importances[indices[f]]))
-            feature_names = ["station_id", "hour", "month",
-                             "avg(temp)", "avg(wind)", "weekno"]
-            fn = rearrange_feature(feature_names, indices)
+                # Plot the feature importances of the forest
+                plt.figure()
+                plt.title("Feature importances")
+                plt.bar(range(x.shape[1]), importances[indices],
+                        color='#4682B4', align="center")
+                plt.xticks(range(x.shape[1]),  fn)
+                plt.xlim([-1, x.shape[1]])
+                plt.show()
 
-            # Plot the feature importances of the forest
-            plt.figure()
-            plt.title("Feature importances")
-            c = np.random.rand()
-            plt.bar(range(x.shape[1]), importances[indices],
-                    color='#4682B4', align="center")
-            plt.xticks(range(x.shape[1]),  fn)
-            plt.xlim([-1, x.shape[1]])
-            plt.show()
-
-            # print('\nSum:', m, '\n\n')
             print("test")
-            print(model)
             scores = my_scorer(model, test_x, test_y)
             print(scores)
             print('time', time.time() - start, '\n\n')
-
-    # clf.fit(x,y)
-    # score = recall_score(test_y,clf.predict(test_x),average="weighted")
-    # print(score)
-    # return clf
-
-    # best_model = None
-    # # save best model
-    # if not os.path.exists(config.save_dir):
-    #     os.makedirs(config.save_dir)
-    # bestmodel_file = os.path.join(config.save_dir, "best_model.joblib")
-    # if os.path.exists(bestmodel_file):
-    #     os.remove(bestmodel_file)
-    # else:
-    #     joblib.dump(best_model, bestmodel_file)
 
 
 def rearrange_feature(feature_names, index):
@@ -169,7 +138,6 @@ def train_difference(config, x, y, test_x, test_y):
         start = time.time()
 
         if name == 'LogisticRegression':
-            # m = np.mean(cross_val_score(model, x, y, scoring=model.score, cv=5))
             model = model.fit(x, y)
             print("test")
             score = model.score(test_x, test_y)
@@ -177,57 +145,11 @@ def train_difference(config, x, y, test_x, test_y):
             print('time', time.time() - start, '\n\n')
         else:
             m = cross_validate(model, x, y, scoring=my_scorer,
-                               cv=15, return_estimator=True)
+                               cv=10, return_estimator=True)
             model = m['estimator'][-1]
             model = model.fit(x, y)
+
             print("test")
             scores = my_scorer(model, test_x, test_y)
             print(scores)
             print('time', time.time() - start, '\n\n')
-
-            # yPred = model.predict(test_x)
-            # yPred = np.asarray(yPred)
-            # y2 = yPred[yPred==2]
-            # y1 = yPred[yPred==1]
-            # y3 = yPred[yPred==0]
-            # for y_, predY_ in zip(test_y,yPred):
-            #     print("truth lable: %d pred: %d" % (y_, predY_))
-            # print(y1)
-            # print(y2)
-            # print(y3)
-            # print('=====')
-            # print(test_x)
-            # print(test_y.shape)
-            # print(test_y)
-            # print(yPred)
-            # outputData('./rf_point_test.csv',test_x,test_y,yPred,feature_names)
-            # importances = model.feature_importances_
-            # print(importances)
-            # # std = np.std([tree.feature_importances_ for tree in model.estimators_],
-            # #             axis=0)
-            # indices = np.argsort(importances)[::-1]
-
-            # # Print the feature ranking
-            # print("Feature ranking:")
-
-            # for f in range(x.shape[1]):
-            #     print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
-            # feature_names = ["station_id", "hour", "avg(temp)", "avg(wind)", "weekno"]
-            # fn = rearrange_feature(feature_names, indices)
-
-            # # Plot the feature importances of the forest
-            # plt.figure()
-            # plt.title("Feature importances")
-            # c = np.random.rand()
-            # plt.bar(range(x.shape[1]), importances[indices],
-            #     color='#afeeee', align="center")
-            # plt.xticks(range(x.shape[1]),  fn)
-            # plt.xlim([-1, x.shape[1]])
-            # plt.show()
-
-        # print('\nSum:', m, '\n\n')
-        # print("test")
-        # scores = my_scorer(model, test_x, test_y)
-        # print('time', time.time() - start, '\n\n')
-
-        # scores = my_scorer(model, test_x, test_y)
