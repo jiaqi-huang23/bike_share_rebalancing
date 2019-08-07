@@ -83,7 +83,7 @@ def train_status(config, x, y, test_x, test_y):
             print('time', time.time() - start, '\n\n')
         else:
             m = cross_validate(model, x, y, scoring=my_scorer,
-                               cv=15, return_estimator=True)
+                               cv=10, return_estimator=True)
             model = m['estimator'][-1]
             model = model.fit(x, y)
 
@@ -145,9 +145,10 @@ def train_difference(config, x, y, test_x, test_y):
             print('time', time.time() - start, '\n\n')
         else:
             m = cross_validate(model, x, y, scoring=my_scorer,
-                               cv=15, return_estimator=True)
+                               cv=10, return_estimator=True)
             model = m['estimator'][-1]
             model = model.fit(x, y)
+
             print("test")
             scores = my_scorer(model, test_x, test_y)
             print(scores)

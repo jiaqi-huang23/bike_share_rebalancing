@@ -56,7 +56,7 @@ def loadDifferenceData(config):
     # diff['difference'] = diff.apply(lambda row: labelInOut(row), axis=1)
 
     label = diff.difference
-    data = diff.drop(['date', 'year', 'day',
+    data = diff.drop(['date', 'year', 'day','max(rain)',
                       'difference', 'weeknoRef', 'holiday'], 1)
 
     print(data.head())
