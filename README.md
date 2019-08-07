@@ -1,17 +1,4 @@
 
-# SENG 474 Final Project
-
-Spring 2019 
-
-Group 10 - 
-
-Bing Gao V00890037
-
-Jiaqi Huang V00862966
-
-Zijie Li  V00863629
-
-------
 
 ## Install required packages
 ```
