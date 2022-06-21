@@ -2,7 +2,7 @@ scikit-image==0.14.1
 scipy==1.2.0
 six==1.12.0
 matplotlib==3.0.2
-numpy==1.15.4
+numpy==1.22.0
 Scikit-learn>=0.20.3
 Cython >=0.23
 pytest >=3.3.0
